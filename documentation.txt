@@ -1,3 +1,5 @@
 Data Parsing:
 	Data source is a .xlxs file. Converting to csv.
 
+csv documentation:
+	State,2016,2017,remaining,%remain,entering,leaving
