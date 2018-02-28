@@ -21,8 +21,15 @@ function parseLine(line) {
     // , Variable: line["Series Name"], value: Number(line["2015 [YR2015]"]) };
 }
 
+d3.queue()
+    .defer(d3.csv, "college_data.csv", parseLine)
+    .defer(d3.json, "us.json")
+    .defer(d3.tsv, "us-state-names.tsv")
+    .await(callback)
 
-d3.csv("college_data.csv", parseLine, function (data) {
+function callback(error, data, unitedState, tsv) {
+    if (error) console.log(error);
+    
     var width = 1200,
         height = 800,
         centered;
@@ -40,44 +47,39 @@ d3.csv("college_data.csv", parseLine, function (data) {
 
     var g = svg.append("g");
 
-    d3.json("us.json", function (unitedState) {
-        var data = topojson.feature(unitedState, unitedState.objects.states).features;
-        d3.tsv("us-state-names.tsv", function (tsv) {
-            var names = {};
-            tsv.forEach(function (d, i) {
-                names[d.id] = d.name;
-            });
+    var data = topojson.feature(unitedState, unitedState.objects.states).features;
 
-            g.append("g")
-                .attr("class", "states-bundle")
-                .selectAll("path")
-                .data(data)
-                .enter()
-                .append("path")
-                .attr("d", path)
-                .attr("stroke", "white")
-                .attr("class", "states");
+    var names = {};
 
-            g.append("g")
-                .attr("class", "states-names")
-                .selectAll("text")
-                .data(data)
-                .enter()
-                .append("svg:text")
-                .text(function (d) {
-                    return names[d.id];
-                })
-                .attr("x", function (d) {
-                    return path.centroid(d)[0];
-                })
-                .attr("y", function (d) {
-                    return path.centroid(d)[1];
-                })
-                .attr("text-anchor", "middle")
-                .attr('fill', 'black');
-
-        });
+    tsv.forEach(function (d, i) {
+        names[d.id] = d.name;
     });
 
+    g.append("g")
+        .attr("class", "states-bundle")
+        .selectAll("path")
+        .data(data)
+        .enter()
+        .append("path")
+        .attr("d", path)
+        .attr("stroke", "white")
+        .attr("class", "states");
 
-});
+    g.append("g")
+        .attr("class", "states-names")
+        .selectAll("text")
+        .data(data)
+        .enter()
+        .append("svg:text")
+        .text(function (d) {
+            return names[d.id];
+        })
+        .attr("x", function (d) {
+            return path.centroid(d)[0];
+        })
+        .attr("y", function (d) {
+            return path.centroid(d)[1];
+        })
+        .attr("text-anchor", "middle")
+        .attr('fill', 'black');
+}
