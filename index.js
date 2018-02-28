@@ -23,11 +23,9 @@ function parseLine(line) {
 
 
 d3.csv("college_data.csv", parseLine, function (data) {
-    console.log(data);
     var width = 1200,
         height = 800,
         centered;
-
 
     var projection = d3.geoAlbersUsa()
         .scale(1400)
@@ -36,15 +34,9 @@ d3.csv("college_data.csv", parseLine, function (data) {
     var path = d3.geoPath()
         .projection(projection);
 
-    var svg = d3.select("body").append("svg")
-        .style("width", width)
-        .style("height", height);
-
-
-    svg.append("rect")
-        .attr("class", "background")
-        .attr("width", width)
-        .attr("height", height);
+    var svg = d3.select("div#main").append("svg")
+        .attr("viewBox", "0 0 " + width + " " + height)
+        .attr("preserveAspectRatio", "xMinYMin meet")
 
     var g = svg.append("g");
 
@@ -89,5 +81,3 @@ d3.csv("college_data.csv", parseLine, function (data) {
 
 
 });
-
-console.log("after callback");
