@@ -23,7 +23,7 @@ function parseLine(line) {
 function findLeave(arr, state) {
     for (i = 0; i < arr.length; i++) {
         data = arr[i]
-        if(data.State == state) {
+        if (data.State == state) {
             return data.pLeaving;
         }
     }
@@ -59,10 +59,12 @@ function callback(error, collegeData, unitedState, tsv) {
     var data = topojson.feature(unitedState, unitedState.objects.states).features;
 
     var names = {};
+    var codes = {};
     var fills = {};
 
     tsv.forEach(function (d, i) {
         names[d.id] = d.name;
+        codes[d.id] = d.code;
     });
 
     svg.selectAll("state")
@@ -89,7 +91,7 @@ function callback(error, collegeData, unitedState, tsv) {
         .data(data)
         .enter()
         .append("svg:text")
-        .text(function (d) { return names[d.id]; })
+        .text(function (d) { return codes[d.id]; })
         .attr("x", function (d) { return path.centroid(d)[0]; })
         .attr("y", function (d) { return path.centroid(d)[1]; })
         .attr("text-anchor", "middle")
