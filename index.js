@@ -16,7 +16,7 @@ function parseLine(line) {
     pLeaving = leave / fromState;
 
     // var percentLeaving = parseInt(line["remaining"]) + parseInt(line["leaving"]);
-    // console.log(line["State"] + "  " + remain + " " + enter + " " + leave + " " + pLeaving);
+    console.log(line["State"] + "  " + remain + " " + enter + " " + leave + " " + pLeaving);
     return { State: line["State"], remain: remain, enter: enter, leave: leave, fromState: fromState, pLeaving: pLeaving };
     // , Variable: line["Series Name"], value: Number(line["2015 [YR2015]"]) };
 }
@@ -25,11 +25,9 @@ d3.queue()
     .defer(d3.csv, "college_data.csv", parseLine)
     .defer(d3.json, "us.json")
     .defer(d3.tsv, "us-state-names.tsv")
-    .await(callback)
-
-function callback(error, data, unitedState, tsv) {
+    .await(function(error, collegeData, unitedState, tsv) {
     if (error) console.log(error);
-    
+
     var width = 1200,
         height = 800,
         centered;
@@ -46,14 +44,28 @@ function callback(error, data, unitedState, tsv) {
         .attr("preserveAspectRatio", "xMinYMin meet")
 
     var g = svg.append("g");
+    console.log("united state", unitedState);
+    console.log("tsv", tsv);
 
     var data = topojson.feature(unitedState, unitedState.objects.states).features;
+    console.log("college data", collegeData);
 
     var names = {};
+    var fills = {};
 
     tsv.forEach(function (d, i) {
         names[d.id] = d.name;
     });
+  svg.selectAll("state")
+         .data(data)
+         .enter().insert("path", ".graticule")
+         .attr("class", "country")
+         .attr("d", path)
+         .style("fill", "red")
+         .data(collegeData)
+         .style("fill-opacity", function (d) {
+              return d.pLeaving;
+          });
 
     g.append("g")
         .attr("class", "states-bundle")
@@ -82,4 +94,5 @@ function callback(error, data, unitedState, tsv) {
         })
         .attr("text-anchor", "middle")
         .attr('fill', 'black');
-}
+
+});
