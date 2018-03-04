@@ -14,11 +14,10 @@ path {
 
 #main {
     width: 100%;
-    padding-bottom: 100%; /* aspect ratio */
     vertical-align: top;
     overflow: hidden;
 }
 
-svg {
-    border: solid #ccc 1px;
+.center {
+	text-align: center;
 }
