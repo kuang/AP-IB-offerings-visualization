@@ -24,7 +24,9 @@ d3.queue()
     .defer(d3.csv, "college_data.csv", parseLine)
     .defer(d3.json, "us.json")
     .defer(d3.tsv, "us-state-names.tsv")
-    .await(function(error, collegeData, unitedState, tsv) {
+    .await(callback);
+
+function callback(error, collegeData, unitedState, tsv) {
     if (error) console.log(error);
 
     var width = 1200,
@@ -91,5 +93,4 @@ d3.queue()
         })
         .attr("text-anchor", "middle")
         .attr('fill', 'black');
-
-});
+}
