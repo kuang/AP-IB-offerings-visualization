@@ -20,6 +20,16 @@ function parseLine(line) {
     // , Variable: line["Series Name"], value: Number(line["2015 [YR2015]"]) };
 }
 
+function findLeave(arr, state) {
+    for (i = 0; i < arr.length; i++) {
+        data = arr[i]
+        if(data.State == state) {
+            return data.pLeaving;
+        }
+    }
+    return 0;
+}
+
 d3.queue()
     .defer(d3.csv, "college_data.csv", parseLine)
     .defer(d3.json, "us.json")
@@ -56,15 +66,12 @@ function callback(error, collegeData, unitedState, tsv) {
     });
 
     svg.selectAll("state")
-         .data(data)
-         .enter().insert("path")
-         .attr("class", "country")
-         .attr("d", path)
-         .style("fill", "red")
-         .data(collegeData)
-         .style("fill-opacity", function (d) {
-              return d.pLeaving;
-          });
+        .data(data)
+        .enter().insert("path")
+        .attr("class", "country")
+        .attr("d", path)
+        .style("fill", "red")
+        .style("fill-opacity", function (d) { return findLeave(collegeData, names[d.id]); });
 
     g.append("g")
         .attr("class", "states-bundle")
@@ -82,15 +89,9 @@ function callback(error, collegeData, unitedState, tsv) {
         .data(data)
         .enter()
         .append("svg:text")
-        .text(function (d) {
-            return names[d.id];
-        })
-        .attr("x", function (d) {
-            return path.centroid(d)[0];
-        })
-        .attr("y", function (d) {
-            return path.centroid(d)[1];
-        })
+        .text(function (d) { return names[d.id]; })
+        .attr("x", function (d) { return path.centroid(d)[0]; })
+        .attr("y", function (d) { return path.centroid(d)[1]; })
         .attr("text-anchor", "middle")
         .attr('fill', 'black');
 }
