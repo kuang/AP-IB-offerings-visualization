@@ -57,7 +57,7 @@ function callback(error, collegeData, unitedState, tsv) {
 
     svg.selectAll("state")
          .data(data)
-         .enter().insert("path", ".graticule")
+         .enter().insert("path")
          .attr("class", "country")
          .attr("d", path)
          .style("fill", "red")

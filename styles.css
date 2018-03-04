@@ -1,0 +1,24 @@
+body {
+    font-family: 'Barlow Condensed', Calibri, sans-serif;
+}
+
+.background {
+    fill: transparent;
+
+}
+
+path {
+    fill: #ccc;
+    stroke: #888;
+}
+
+#main {
+    width: 100%;
+    padding-bottom: 100%; /* aspect ratio */
+    vertical-align: top;
+    overflow: hidden;
+}
+
+svg {
+    border: solid #ccc 1px;
+}
