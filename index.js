@@ -64,7 +64,12 @@ function callback(
         .attr("viewBox", "0 0 " + width + " " + height)
         .attr("preserveAspectRatio", "xMinYMin meet")
 
+    var svg2 = d3.select("div#entering").append("svg")
+        .attr("viewBox", "0 0 " + width + " " + height)
+        .attr("preserveAspectRatio", "xMinYMin meet")
+
     var g = svg.append("g");
+    var g2 = svg2.append("g");
 
     var data = topojson.feature(unitedState, unitedState.objects.states).features;
 
@@ -96,6 +101,37 @@ function callback(
         .attr("class", "states");
 
     g.append("g")
+        .attr("class", "states-names")
+        .selectAll("text")
+        .data(data)
+        .enter()
+        .append("svg:text")
+        .text(function (d) { return codes[d.id]; })
+        .attr("x", function (d) { return path.centroid(d)[0]; })
+        .attr("y", function (d) { return path.centroid(d)[1]; })
+        .attr("text-anchor", "middle")
+        .attr('fill', 'black');
+
+    // Second graph
+    svg2.selectAll("state")
+        .data(data)
+        .enter().insert("path")
+        .attr("class", "country")
+        .attr("d", path)
+        .style("fill", "red")
+        .style("fill-opacity", function (d) { return findLeave(collegeData, names[d.id]); });
+
+    g2.append("g")
+        .attr("class", "states-bundle")
+        .selectAll("path")
+        .data(data)
+        .enter()
+        .append("path")
+        .attr("d", path)
+        .attr("stroke", "white")
+        .attr("class", "states");
+
+    g2.append("g")
         .attr("class", "states-names")
         .selectAll("text")
         .data(data)
