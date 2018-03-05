@@ -110,6 +110,10 @@ function callback(
         names[d.id] = d.name;
         codes[d.id] = d.code;
     });
+    svg.append("rect")
+        .attr("width", "100%")
+        .attr("height", "100%")
+        .attr("fill", "white");
 
     svg.selectAll("state")
         .data(data)
