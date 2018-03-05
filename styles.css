@@ -7,8 +7,10 @@ body {
     background-color: #fff !important
 
 }
-.graph-svg-component {
-    background-color: AliceBlue;
+.states-bundle {
+    fill: white !important;
+    background-color: #fff !important
+
 }
 
 path {
