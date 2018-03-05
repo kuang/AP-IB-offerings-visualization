@@ -86,15 +86,20 @@ function callback(
 
     var svg = d3.select("div#ap").append("svg")
         .attr("viewBox", "0 0 " + width + " " + height)
-        .attr("preserveAspectRatio", "xMinYMin meet");
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .attr("class", "graph-svg-component");
+
 
     var svg2 = d3.select("div#ib").append("svg")
         .attr("viewBox", "0 0 " + width + " " + height)
-        .attr("preserveAspectRatio", "xMinYMin meet");
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .attr("class", "graph-svg-component");
 
     var svg3 = d3.select("div#both").append("svg")
         .attr("viewBox", "0 0 " + width + " " + height)
-        .attr("preserveAspectRatio", "xMinYMin meet");
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .attr("class", "graph-svg-component");
+
 
     var g = svg.append("g");
     var g2 = svg2.append("g");
@@ -110,10 +115,6 @@ function callback(
         names[d.id] = d.name;
         codes[d.id] = d.code;
     });
-    svg.append("rect")
-        .attr("width", "100%")
-        .attr("height", "100%")
-        .attr("fill", "white");
 
     svg.selectAll("state")
         .data(data)

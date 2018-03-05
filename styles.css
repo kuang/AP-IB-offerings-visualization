@@ -3,9 +3,12 @@ body {
 }
 
 .background {
-    fill: transparent;
+    fill: white;
     background-color: #fff !important
 
+}
+.graph-svg-component {
+    background-color: AliceBlue;
 }
 
 path {
