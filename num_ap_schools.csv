@@ -1,52 +1,52 @@
-State,Public,Private
-Alabama,254,89
-Alaska,66,13
-Arizona,261,65
-Arkansas,285,31
-California,1658,652
-Colorado,289,75
-Connecticut,185,77
-Delaware,42,27
-District of Columbia,30,22
-Florida,616,480
-Georgia,403,215
-Hawaii,46,37
-Idaho,82,20
-Illinois,520,178
-Indiana,344,79
-Iowa,179,31
-Kansas,102,26
-Kentucky,202,63
-Louisiana,209,72
-Maine,113,28
-Maryland,210,150
-Massachusetts,321,138
-Michigan,527,126
-Minnesota,258,68
-Mississippi,144,37
-Missouri,241,92
-Montana,84,19
-Nebraska,65,27
-Nevada,94,20
-New Hampshire,82,36
-New Jersey,405,159
-New Mexico,102,28
-New York,1101,344
-North Carolina,476,153
-North Dakota,45,9
-Ohio,584,164
-Oklahoma,270,34
-Oregon,177,52
-Pennsylvania,580,213
-Rhode Island,51,19
-South Carolina,212,80
-South Dakota,68,11
-Tennessee,250,108
-Texas,1442,360
-Utah,151,46
-Vermont,57,16
-Virginia,318,142
-Washington,338,97
-West Virginia,110,13
-Wisconsin,408,96
-Wyoming,34,5
+State,AP,IB
+Alabama,254,12
+Alaska,66,2
+Arizona,261,19
+Arkansas,285,4
+California,1658,96
+Colorado,289,33
+Connecticut,185,6
+Delaware,42,5
+District of Columbia,30,4
+Florida,616,74
+Georgia,403,30
+Hawaii,46,2
+Idaho,82,3
+Illinois,520,30
+Indiana,344,18
+Iowa,179,3
+Kansas,102,8
+Kentucky,202,3
+Louisiana,209,5
+Maine,113,3
+Maryland,210,23
+Massachusetts,321,11
+Michigan,527,33
+Minnesota,258,19
+Mississippi,144,3
+Missouri,241,12
+Montana,84,4
+Nebraska,65,3
+Nevada,94,5
+New Hampshire,82,1
+New Jersey,405,14
+New Mexico,102,3
+New York,1101,55
+North Carolina,476,32
+North Dakota,45,0
+Ohio,584,17
+Oklahoma,270,2
+Oregon,177,18
+Pennsylvania,580,16
+Rhode Island,51,0
+South Carolina,212,25
+South Dakota,68,0
+Tennessee,250,13
+Texas,1442,61
+Utah,151,10
+Vermont,57,0
+Virginia,318,36
+Washington,338,19
+West Virginia,110,1
+Wisconsin,408,10
+Wyoming,34,2
