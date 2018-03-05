@@ -2,4 +2,6 @@ Data Parsing:
 	Data source is a .xlxs file. Converting to csv.
 
 csv documentation:
-	State,2016,2017,remaining,%remain,entering,leaving
+	Source of # of public high school 12th graders: https://nces.ed.gov/programs/digest/d17/tables/dt17_203.40.asp?current=yes
+	Source of # of private high school 12th graders: https://nces.ed.gov/programs/digest/d16/tables/dt16_205.80.asp?current=yes
+	Source of # of AP tests per state: https://secure-media.collegeboard.org/digitalServices/pdf/research/2017/School-Report-Exams-2017.xls

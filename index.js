@@ -1,23 +1,10 @@
 var svg = d3.select("svg");
 
-function parseLine(line) {
-    var
-        remain, //number of in state students staying in state
-        enter, //number of out of state students entering
-        leave, //number of in state students leaving
-        fromState, //total number from state (remain+leave)
-        pLeaving; //percentage in state students leaving
-
-    remain = parseInt(line["remaining"]); //not sure why the csv values aren't being parsed as integers directly
-    enter = parseInt(line["entering"]);
-    leave = parseInt(line["leaving"]);
-
-    fromState = remain + leave;
-    pLeaving = leave / fromState;
-
-    // var percentLeaving = parseInt(line["remaining"]) + parseInt(line["leaving"]);
-    return { State: line["State"], remain: remain, enter: enter, leave: leave, fromState: fromState, pLeaving: pLeaving };
-    // , Variable: line["Series Name"], value: Number(line["2015 [YR2015]"]) };
+function parseSchools(line) {
+    return { State: line["State"], Public: parseInt(line["Public"]), Private: parseInt(line["Private"]) };
+}
+function parseStudents(line) {
+    return { State: line["State"], Public: parseInt(line["public"]), Private: parseInt(line["private"]) };
 }
 
 function findLeave(arr, state) {
@@ -31,13 +18,36 @@ function findLeave(arr, state) {
 }
 
 d3.queue()
-    .defer(d3.csv, "college_data.csv", parseLine)
+    .defer(d3.csv, "num_ap_schools.csv", parseSchools)
+    .defer(d3.csv, "hs_grads.csv", parseStudents)
     .defer(d3.json, "us.json")
     .defer(d3.tsv, "us-state-names.tsv")
     .await(callback);
 
-function callback(error, collegeData, unitedState, tsv) {
+function callback(
+    error,
+    school_data,
+    student_data,
+    unitedState,
+    tsv) {
+
+    var publicPercents = new Array(school_data.length);
+    var privatePercents = new Array(school_data.length);
+
+    for (var i = 0; i < school_data.length; i++) {
+        var numAPpublic = school_data[i].Public;
+        var numStudentpublic = student_data[i].Public;
+        publicPercents[i] = numAPpublic / numStudentpublic;
+
+        var numAPprivate = school_data[i].Private;
+        var numStudentprivate = student_data[i].Private;
+        privatePercents[i] = numAPprivate / numStudentprivate;
+
+        console.log(publicPercents[i]);
+    }
     if (error) console.log(error);
+    // console.log(school_data);
+    // console.log(student_data);
 
     var width = 1200,
         height = 800,
@@ -73,7 +83,7 @@ function callback(error, collegeData, unitedState, tsv) {
         .attr("class", "country")
         .attr("d", path)
         .style("fill", "red")
-        .style("fill-opacity", function (d) { return findLeave(collegeData, names[d.id]); });
+    // .style("fill-opacity", function (d) { return findLeave(collegeData, names[d.id]); });
 
     g.append("g")
         .attr("class", "states-bundle")
