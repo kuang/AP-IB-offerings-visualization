@@ -3,7 +3,16 @@ Data Parsing:
 
 Map issue:
 	us.json (usa map file) does not have direct path-to-state correlation (ex. a "state" field)- only arbitrary ish ID numbers for each state. We solved this problem by finding a third party file source (us-state-names.tsv) that further correlates said ID numbers to state name Strings.
-	
+
 csv documentation:
 	Source of # of AP offering schools per state: https://secure-media.collegeboard.org/digitalServices/pdf/research/2017/School-Report-Exams-2017.xls
 	Source of # of IB offering schools per state: http://www.ibo.org/programmes/find-an-ib-school
+
+
+Data insights:
+	Third map doesn't account for overlap, but most high schools don't offer both programs.
+	Third map very similar to first- relatively few schools in USA offer IB program.
+
+	Overall East Coast bias. Connneticut sucks relative to neighbors- maybe higher emphasis on private schools?
+
+	
