@@ -62,7 +62,8 @@ function callback(
     total_public_schools,
     unitedState,
     tsv,
-    presidentialResults) {
+    presidentialResults,
+    money) {
 
     if (error) console.log(error);
 
@@ -215,8 +216,8 @@ function callback(
         bottom: 80, 
         left: 60
     }, 
-        width = 800 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom
+        width = 700 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom
 
 
     var presSVG = d3.select("#pres").append("svg")
@@ -332,6 +333,7 @@ function callback(
         .attr("dy", ".35em")
         .style("text-anchor", "end")
         .text(function(d) { return d.text; });
+
 }
 
 // Credits to https://bl.ocks.org/nanu146/de5bd30782dfe18fa5efa0d8d299abce for the function
@@ -363,11 +365,12 @@ $(document).ready(function() {
     var svg = d3.select("svg");
 
     d3.queue()
-        .defer(d3.csv, "num_ap_schools.csv", parseAP_IB)
-        .defer(d3.csv, "num_publichs.csv", parseTotalSchools)
-        .defer(d3.json, "us.json")
-        .defer(d3.tsv, "us-state-names.tsv")
-        .defer(d3.csv, "pres16results.csv")
+        .defer(d3.csv, "/data/num_ap_schools.csv", parseAP_IB)
+        .defer(d3.csv, "/data/num_publichs.csv", parseTotalSchools)
+        .defer(d3.json, "/data/us.json")
+        .defer(d3.tsv, "/data/us-state-names.tsv")
+        .defer(d3.csv, "/data/pres16results.csv")
+        .defer(d3.csv, "/data/wealth.csv")
         .await(callback);
 });
 
