@@ -69,7 +69,6 @@ function callback(
 
     var apPercents = [];
     var ibPercents = [];
-    var bothPercents = [];
 
     for (var i = 0; i < total_public_schools.length; i++) {
         var numAP = AP_IB_data[i].AP;
@@ -85,11 +84,6 @@ function callback(
                 State: total_public_schools[i].State,
                 Percent: numIB / numTotal
             })
-
-            bothPercents.push({
-                State: total_public_schools[i].State,
-                Percent: (numIB + numAP) / numTotal
-            })
         }
     }
 
@@ -99,14 +93,9 @@ function callback(
     var ibExtent = d3.extent(ibPercents, function (d) {
         return d.Percent;
     });
-    var bothExtent = d3.extent(bothPercents, function (d) {
-        return d.Percent;
-    });
-
 
     var apScale = d3.scaleLinear().domain(apExtent).range([0.00, 1.00]);
     var ibScale = d3.scaleLinear().domain(ibExtent).range([0.00, 1.00]);
-    var bothScale = d3.scaleLinear().domain(bothExtent).range([0.00, 1.00]);
 
     var width = 1200,
         height = 800,
@@ -333,7 +322,6 @@ function callback(
         .attr("dy", ".35em")
         .style("text-anchor", "end")
         .text(function (d) { return d.text; });
-
 }
 
 // Credits to https://bl.ocks.org/nanu146/de5bd30782dfe18fa5efa0d8d299abce for the function
