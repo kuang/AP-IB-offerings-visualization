@@ -261,8 +261,6 @@ function callback(
         .text("Percentage of State Voting for Trump")
         .style('fill', 'black')
 
-    var color = d3.scaleOrdinal(d3.schemeCategory10);
-
     presSVG.selectAll(".point")
         .data(apPercents)
         .enter()
@@ -308,6 +306,32 @@ function callback(
         .datum(apPercents)
         .attr("d", line)
 
+    var cdomain = [{
+        color: "blue", 
+        text: "State won by Clinton"
+    }, {
+        color: "red", 
+        text: "State won by Trump"
+    }]
+
+    var legend = presSVG.selectAll(".legend")
+        .data(cdomain)
+        .enter().append("g")
+        .attr("class", "legend")
+        .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+    legend.append("rect")
+        .attr("x", width - 18)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", function(d){ return d.color });
+
+    legend.append("text")
+        .attr("x", width - 24)
+        .attr("y", 9)
+        .attr("dy", ".35em")
+        .style("text-anchor", "end")
+        .text(function(d) { return d.text; });
 }
 
 // Credits to https://bl.ocks.org/nanu146/de5bd30782dfe18fa5efa0d8d299abce for the function
