@@ -16,8 +16,8 @@ function findLeave(arr, state) {
 }
 
 function getStateCode(state, arr) {
-    for(i = 0 ; i< arr.length; i++) {
-        if(arr[i].name == state) {
+    for (i = 0; i < arr.length; i++) {
+        if (arr[i].name == state) {
             return arr[i].code
         }
     }
@@ -44,7 +44,7 @@ function convertStatesToJson(arr) {
             } else {
                 clinton[dp.st] = [parseInt(votes), parseInt(total_votes_for_county), dp.st, dp.lead]
             }
-        } else if(candidate == "Donald Trump") {
+        } else if (candidate == "Donald Trump") {
             if (dp.st in trump) {
                 trump[dp.st][0] += parseInt(votes)
                 trump[dp.st][1] += parseInt(total_votes_for_county)
@@ -62,8 +62,8 @@ function callback(
     total_public_schools,
     unitedState,
     tsv,
-    presidentialResults,
-    money) {
+    presidentialResults
+) {
 
     if (error) console.log(error);
 
@@ -76,7 +76,7 @@ function callback(
         var numIB = AP_IB_data[i].IB;
 
         var numTotal = total_public_schools[i].Number;
-        if(total_public_schools[i].State != "District of Columbia") {
+        if (total_public_schools[i].State != "District of Columbia") {
             apPercents.push({
                 State: total_public_schools[i].State,
                 Percent: numAP / numTotal
@@ -211,11 +211,11 @@ function callback(
     var trump = pres[1]
 
     var margin = {
-        top: 20, 
+        top: 20,
         right: 20,
-        bottom: 80, 
+        bottom: 80,
         left: 60
-    }, 
+    },
         width = 700 - margin.left - margin.right,
         height = 400 - margin.top - margin.bottom
 
@@ -230,7 +230,7 @@ function callback(
         .domain([0.15, 1.1])
         .range([0, width])
 
-    var y = d3.scaleLinear() 
+    var y = d3.scaleLinear()
         .domain([0.3, 0.8])
         .range([height, 0])
 
@@ -266,23 +266,23 @@ function callback(
         .data(apPercents)
         .enter()
         .append("circle")
-        .attr("cy", function(d) {
+        .attr("cy", function (d) {
             var abbrev = getStateCode(d.State, tsv);
             st = trump[abbrev];
             return y(st[0] / st[1]);
         })
-        .attr("cx", function(d) {
+        .attr("cx", function (d) {
             return x(d.Percent);
-        } )
+        })
         .attr("r", 6.5)
         .style("stroke", "black")
         .style("stroke-width", 1)    // set the stroke width
-        .style("fill", function(d) {
+        .style("fill", function (d) {
             var abbrev = getStateCode(d.State, tsv);
             st = trump[abbrev]
-            if(st[3] == "Hillary Clinton") {
+            if (st[3] == "Hillary Clinton") {
                 return "blue";
-            } else if(st[3] == "Donald Trump") {
+            } else if (st[3] == "Donald Trump") {
                 return "red";
             } else {
                 // For independent
@@ -291,27 +291,27 @@ function callback(
         });
 
     // Plotting the regression line
-    var XaxisData = apPercents.map(function(d) { return d.Percent; });
-    var YaxisData = apPercents.map(function(d) {             
+    var XaxisData = apPercents.map(function (d) { return d.Percent; });
+    var YaxisData = apPercents.map(function (d) {
         var abbrev = getStateCode(d.State, tsv);
         st = trump[abbrev];
         return (st[0] / st[1]);
     });
-    var regression = leastSquaresequation(XaxisData,YaxisData);
+    var regression = leastSquaresequation(XaxisData, YaxisData);
 
     var line = d3.line()
-        .x(function(d) { return x(d.Percent); })
-        .y(function(d) { return y(regression(d.Percent)); });
+        .x(function (d) { return x(d.Percent); })
+        .y(function (d) { return y(regression(d.Percent)); });
 
     presSVG.append("path")
         .datum(apPercents)
         .attr("d", line)
 
     var cdomain = [{
-        color: "blue", 
+        color: "blue",
         text: "State won by Clinton"
     }, {
-        color: "red", 
+        color: "red",
         text: "State won by Trump"
     }]
 
@@ -319,58 +319,57 @@ function callback(
         .data(cdomain)
         .enter().append("g")
         .attr("class", "legend")
-        .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+        .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; });
 
     legend.append("rect")
         .attr("x", width - 18)
         .attr("width", 18)
         .attr("height", 18)
-        .style("fill", function(d){ return d.color });
+        .style("fill", function (d) { return d.color });
 
     legend.append("text")
         .attr("x", width - 24)
         .attr("y", 9)
         .attr("dy", ".35em")
         .style("text-anchor", "end")
-        .text(function(d) { return d.text; });
+        .text(function (d) { return d.text; });
 
 }
 
 // Credits to https://bl.ocks.org/nanu146/de5bd30782dfe18fa5efa0d8d299abce for the function
 function leastSquaresequation(XaxisData, Yaxisdata) {
-    var ReduceAddition = function(prev, cur) { return prev + cur; };
+    var ReduceAddition = function (prev, cur) { return prev + cur; };
 
     var xBar = XaxisData.reduce(ReduceAddition) * 1.0 / XaxisData.length;
     var yBar = Yaxisdata.reduce(ReduceAddition) * 1.0 / Yaxisdata.length;
 
-    var SquareXX = XaxisData.map(function(d) { return Math.pow(d - xBar, 2); })
+    var SquareXX = XaxisData.map(function (d) { return Math.pow(d - xBar, 2); })
         .reduce(ReduceAddition);
 
-    var ssYY = Yaxisdata.map(function(d) { return Math.pow(d - yBar, 2); })
+    var ssYY = Yaxisdata.map(function (d) { return Math.pow(d - yBar, 2); })
         .reduce(ReduceAddition);
 
-    var MeanDiffXY = XaxisData.map(function(d, i) { return (d - xBar) * (Yaxisdata[i] - yBar); })
+    var MeanDiffXY = XaxisData.map(function (d, i) { return (d - xBar) * (Yaxisdata[i] - yBar); })
         .reduce(ReduceAddition);
 
     var slope = MeanDiffXY / SquareXX;
     var intercept = yBar - (xBar * slope);
 
-    return function(x){
-        return x*slope+intercept
+    return function (x) {
+        return x * slope + intercept
     }
 }
 
 // To make sure that elements don't generate before the DOM has loaded.
-$(document).ready(function() {
+$(document).ready(function () {
     var svg = d3.select("svg");
 
     d3.queue()
-        .defer(d3.csv, "/data/num_ap_schools.csv", parseAP_IB)
-        .defer(d3.csv, "/data/num_publichs.csv", parseTotalSchools)
-        .defer(d3.json, "/data/us.json")
-        .defer(d3.tsv, "/data/us-state-names.tsv")
-        .defer(d3.csv, "/data/pres16results.csv")
-        .defer(d3.csv, "/data/wealth.csv")
+        .defer(d3.csv, "data/num_ap_schools.csv", parseAP_IB)
+        .defer(d3.csv, "data/num_publichs.csv", parseTotalSchools)
+        .defer(d3.json, "data/us.json")
+        .defer(d3.tsv, "data/us-state-names.tsv")
+        .defer(d3.csv, "data/pres16results.csv")
         .await(callback);
 });
 
