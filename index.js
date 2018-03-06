@@ -90,7 +90,6 @@ function callback(
                 Percent: (numIB + numAP) / numTotal
             })
         }
-        // console.log(apPercents[i].State + "  " + apPercents[i].Percent);
     }
 
     var apExtent = d3.extent(apPercents, function (d) {
@@ -275,7 +274,6 @@ function callback(
             return y(st[0] / st[1]);
         })
         .attr("cx", function(d) {
-            console.log(d.Percent)
             return x(d.Percent);
         } )
         .attr("r", 5)
