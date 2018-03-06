@@ -1,6 +1,6 @@
 body {
     font-family: 'Barlow Condensed', Calibri, sans-serif;
-  background-color: black; 
+  /*background-color: black; */
 }
 
 html {
@@ -9,12 +9,10 @@ html {
 .background {
     fill: white;
     background-color: #fff !important
-
 }
 .states-bundle {
     fill: white !important;
     background-color: #fff !important
-
 }
 
 path {

@@ -92,7 +92,6 @@ function callback(
         }
         // console.log(apPercents[i].State + "  " + apPercents[i].Percent);
     }
-    console.log(apPercents)
 
     var apExtent = d3.extent(apPercents, function (d) {
         return d.Percent;
@@ -123,23 +122,13 @@ function callback(
     var svg = d3.select("div#ap").append("svg")
         .attr("viewBox", "0 0 " + width + " " + height)
         .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("class", "graph-svg-component");
-
 
     var svg2 = d3.select("div#ib").append("svg")
         .attr("viewBox", "0 0 " + width + " " + height)
         .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("class", "graph-svg-component");
-
-    var svg3 = d3.select("div#both").append("svg")
-        .attr("viewBox", "0 0 " + width + " " + height)
-        .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("class", "graph-svg-component");
-
 
     var g = svg.append("g");
     var g2 = svg2.append("g");
-    var g3 = svg3.append("g");
 
     var data = topojson.feature(unitedState, unitedState.objects.states).features;
 
@@ -190,7 +179,7 @@ function callback(
         .enter().insert("path")
         .attr("class", "country")
         .attr("d", path)
-        .style("fill", "red")
+        .style("fill", "blue")
         .style("fill-opacity", function (d) {
             return ibScale(findLeave(ibPercents, names[d.id]));
         });
@@ -217,39 +206,6 @@ function callback(
         .attr("text-anchor", "middle")
         .attr('fill', 'black');
 
-    // Third graph
-    svg3.selectAll("state")
-        .data(data)
-        .enter().insert("path")
-        .attr("class", "country")
-        .attr("d", path)
-        .style("fill", "red")
-        .style("fill-opacity", function (d) {
-            return bothScale(findLeave(bothPercents, names[d.id]));
-        });
-
-    g3.append("g")
-        .attr("class", "states-bundle")
-        .selectAll("path")
-        .data(data)
-        .enter()
-        .append("path")
-        .attr("d", path)
-        .attr("stroke", "white")
-        .attr("class", "states");
-
-    g3.append("g")
-        .attr("class", "states-names")
-        .selectAll("text")
-        .data(data)
-        .enter()
-        .append("svg:text")
-        .text(function (d) { return codes[d.id]; })
-        .attr("x", function (d) { return path.centroid(d)[0]; })
-        .attr("y", function (d) { return path.centroid(d)[1]; })
-        .attr("text-anchor", "middle")
-        .attr('fill', 'black');
-
     var pres = convertStatesToJson(presidentialResults)
     var clinton = pres[0]
     var trump = pres[1]
@@ -257,18 +213,25 @@ function callback(
     var margin = {
         top: 20, 
         right: 20,
-        bottom: 30, 
-        left: 40
+        bottom: 80, 
+        left: 60
     }, 
-        width = 960 - margin.left - margin.right,
+        width = 800 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom
 
+
+    var presSVG = d3.select("#pres").append("svg")
+        .attr("viewBox", "0 0 " + (width + margin.left + margin.right) + " " + (height + margin.top + margin.bottom))
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
     var x = d3.scaleLinear()
-        .domain([0.1, 1])
+        .domain([0.15, 1.1])
         .range([0, width])
 
     var y = d3.scaleLinear() 
-        .domain([0.3, 0.75])
+        .domain([0.3, 0.8])
         .range([height, 0])
 
     var xAxis = d3.axisBottom()
@@ -277,19 +240,27 @@ function callback(
     var yAxis = d3.axisLeft()
         .scale(y)
 
-    var presSVG = d3.select("#pres")
-        .append("svg")
-        .attr("width", width + margin.left, + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
     presSVG.append("g")
         .attr("transform", "translate(0," + height + ")")
-        .call(xAxis);
+        .call(xAxis)
+        .append("text")
+        .attr("class", "label")
+        .attr("x", width)
+        .attr("y", -6)
+        .style("text-anchor", "end")
+        .text("Percentage of Schools Offering AP Curriculum")
+        .style('fill', 'black')
 
     presSVG.append("g")
         .call(yAxis)
+        .append("text")
+        .attr("class", "label")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("Percentage of State Voting for Trump")
+        .style('fill', 'black')
 
     var color = d3.scaleOrdinal(d3.schemeCategory10);
 
@@ -304,6 +275,7 @@ function callback(
             return y(st[0] / st[1]);
         })
         .attr("cx", function(d) {
+            console.log(d.Percent)
             return x(d.Percent);
         } )
         .attr("r", 5)
