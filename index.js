@@ -42,14 +42,14 @@ function convertStatesToJson(arr) {
                 clinton[dp.st][0] += parseInt(votes)
                 clinton[dp.st][1] += parseInt(total_votes_for_county)
             } else {
-                clinton[dp.st] = [parseInt(votes), parseInt(total_votes_for_county), dp.st]
+                clinton[dp.st] = [parseInt(votes), parseInt(total_votes_for_county), dp.st, dp.lead]
             }
         } else if(candidate == "Donald Trump") {
             if (dp.st in trump) {
                 trump[dp.st][0] += parseInt(votes)
                 trump[dp.st][1] += parseInt(total_votes_for_county)
             } else {
-                trump[dp.st] = [parseInt(votes), parseInt(total_votes_for_county), dp.st]
+                trump[dp.st] = [parseInt(votes), parseInt(total_votes_for_county), dp.st, dp.lead]
             }
         }
     }
@@ -267,7 +267,6 @@ function callback(
         .data(apPercents)
         .enter()
         .append("circle")
-        .attr("class", "point")
         .attr("cy", function(d) {
             var abbrev = getStateCode(d.State, tsv);
             st = trump[abbrev];
@@ -276,9 +275,23 @@ function callback(
         .attr("cx", function(d) {
             return x(d.Percent);
         } )
-        .attr("r", 5)
-        .style("fill", function(d) { return color(d.Percent); });
+        .attr("r", 6.5)
+        .style("stroke", "black")
+        .style("stroke-width", 1)    // set the stroke width
+        .style("fill", function(d) {
+            var abbrev = getStateCode(d.State, tsv);
+            st = trump[abbrev]
+            if(st[3] == "Hillary Clinton") {
+                return "blue";
+            } else if(st[3] == "Donald Trump") {
+                return "red";
+            } else {
+                // For independent
+                return "green"
+            }
+        });
 
+    // Plotting the regression line
     var XaxisData = apPercents.map(function(d) { return d.Percent; });
     var YaxisData = apPercents.map(function(d) {             
         var abbrev = getStateCode(d.State, tsv);
@@ -297,34 +310,31 @@ function callback(
 
 }
 
-
-
+// Credits to https://bl.ocks.org/nanu146/de5bd30782dfe18fa5efa0d8d299abce for the function
 function leastSquaresequation(XaxisData, Yaxisdata) {
     var ReduceAddition = function(prev, cur) { return prev + cur; };
-    
-    // finding the mean of Xaxis and Yaxis data
+
     var xBar = XaxisData.reduce(ReduceAddition) * 1.0 / XaxisData.length;
     var yBar = Yaxisdata.reduce(ReduceAddition) * 1.0 / Yaxisdata.length;
 
     var SquareXX = XaxisData.map(function(d) { return Math.pow(d - xBar, 2); })
-      .reduce(ReduceAddition);
-    
+        .reduce(ReduceAddition);
+
     var ssYY = Yaxisdata.map(function(d) { return Math.pow(d - yBar, 2); })
-      .reduce(ReduceAddition);
-      
+        .reduce(ReduceAddition);
+
     var MeanDiffXY = XaxisData.map(function(d, i) { return (d - xBar) * (Yaxisdata[i] - yBar); })
-      .reduce(ReduceAddition);
-      
+        .reduce(ReduceAddition);
+
     var slope = MeanDiffXY / SquareXX;
     var intercept = yBar - (xBar * slope);
-    
-// returning regression function
+
     return function(x){
-      return x*slope+intercept
+        return x*slope+intercept
     }
+}
 
-  }
-
+// To make sure that elements don't generate before the DOM has loaded.
 $(document).ready(function() {
     var svg = d3.select("svg");
 
