@@ -1,4 +1,3 @@
-var svg = d3.select("svg");
 
 function parseTotalSchools(line) {
     return { State: line["State"], Number: parseInt(line["Number"]) };
@@ -16,47 +15,84 @@ function findLeave(arr, state) {
     return 0;
 }
 
-d3.queue()
-    .defer(d3.csv, "num_ap_schools.csv", parseAP_IB)
-    .defer(d3.csv, "num_publichs.csv", parseTotalSchools)
-    .defer(d3.json, "us.json")
-    .defer(d3.tsv, "us-state-names.tsv")
-    .await(callback);
+function getStateCode(state, arr) {
+    for(i = 0 ; i< arr.length; i++) {
+        if(arr[i].name == state) {
+            return arr[i].code
+        }
+    }
+    return 0;
+}
+
+function convertStatesToJson(arr) {
+    // This should map to an array of states, each with the amount of voters who voted for her. 
+    clinton = {}
+    trump = {}
+
+    for (i = 0; i < arr.length; i++) {
+        dp = arr[i];
+        state = dp.st;
+        candidate = dp.cand;
+        total_votes_for_county = dp.total_votes;
+        votes = dp.votes;
+
+        if (candidate == "Hillary Clinton") {
+            if (dp.st in clinton) {
+                // The first index is the number of voters who went for her, second is total number of voters
+                clinton[dp.st][0] += parseInt(votes)
+                clinton[dp.st][1] += parseInt(total_votes_for_county)
+            } else {
+                clinton[dp.st] = [parseInt(votes), parseInt(total_votes_for_county), dp.st]
+            }
+        } else if(candidate == "Donald Trump") {
+            if (dp.st in trump) {
+                trump[dp.st][0] += parseInt(votes)
+                trump[dp.st][1] += parseInt(total_votes_for_county)
+            } else {
+                trump[dp.st] = [parseInt(votes), parseInt(total_votes_for_county), dp.st]
+            }
+        }
+    }
+    return [clinton, trump]
+}
 
 function callback(
     error,
     AP_IB_data,
     total_public_schools,
     unitedState,
-    tsv) {
+    tsv,
+    presidentialResults) {
 
     if (error) console.log(error);
 
-    var apPercents = new Array(total_public_schools.length);
-    var ibPercents = new Array(total_public_schools.length);
-    var bothPercents = new Array(total_public_schools.length);
+    var apPercents = [];
+    var ibPercents = [];
+    var bothPercents = [];
 
     for (var i = 0; i < total_public_schools.length; i++) {
         var numAP = AP_IB_data[i].AP;
         var numIB = AP_IB_data[i].IB;
 
         var numTotal = total_public_schools[i].Number;
-        apPercents[i] = {
-            State: total_public_schools[i].State,
-            Percent: numAP / numTotal
-        };
-        ibPercents[i] = {
-            State: total_public_schools[i].State,
-            Percent: numIB / numTotal
-        };
+        if(total_public_schools[i].State != "District of Columbia") {
+            apPercents.push({
+                State: total_public_schools[i].State,
+                Percent: numAP / numTotal
+            });
+            ibPercents.push({
+                State: total_public_schools[i].State,
+                Percent: numIB / numTotal
+            })
 
-        bothPercents[i] = {
-            State: total_public_schools[i].State,
-            Percent: (numIB + numAP) / numTotal
-        };
-
-        console.log(apPercents[i].State + "  " + apPercents[i].Percent);
+            bothPercents.push({
+                State: total_public_schools[i].State,
+                Percent: (numIB + numAP) / numTotal
+            })
+        }
+        // console.log(apPercents[i].State + "  " + apPercents[i].Percent);
     }
+    console.log(apPercents)
 
     var apExtent = d3.extent(apPercents, function (d) {
         return d.Percent;
@@ -213,4 +249,76 @@ function callback(
         .attr("y", function (d) { return path.centroid(d)[1]; })
         .attr("text-anchor", "middle")
         .attr('fill', 'black');
+
+    var pres = convertStatesToJson(presidentialResults)
+    var clinton = pres[0]
+    var trump = pres[1]
+
+    var margin = {
+        top: 20, 
+        right: 20,
+        bottom: 30, 
+        left: 40
+    }, 
+        width = 960 - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom
+
+    var x = d3.scaleLinear()
+        .domain([0.1, 1])
+        .range([0, width])
+
+    var y = d3.scaleLinear() 
+        .domain([0.3, 0.75])
+        .range([height, 0])
+
+    var xAxis = d3.axisBottom()
+        .scale(x)
+
+    var yAxis = d3.axisLeft()
+        .scale(y)
+
+    var presSVG = d3.select("#pres")
+        .append("svg")
+        .attr("width", width + margin.left, + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    presSVG.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+
+    presSVG.append("g")
+        .call(yAxis)
+
+    var color = d3.scaleOrdinal(d3.schemeCategory10);
+
+    presSVG.selectAll(".point")
+        .data(apPercents)
+        .enter()
+        .append("circle")
+        .attr("class", "point")
+        .attr("cy", function(d) {
+            var abbrev = getStateCode(d.State, tsv);
+            st = trump[abbrev];
+            return y(st[0] / st[1]);
+        })
+        .attr("cx", function(d) {
+            return x(d.Percent);
+        } )
+        .attr("r", 5)
+        .style("fill", function(d) { return color(d.Percent); });
 }
+
+$(document).ready(function() {
+    var svg = d3.select("svg");
+
+    d3.queue()
+        .defer(d3.csv, "num_ap_schools.csv", parseAP_IB)
+        .defer(d3.csv, "num_publichs.csv", parseTotalSchools)
+        .defer(d3.json, "us.json")
+        .defer(d3.tsv, "us-state-names.tsv")
+        .defer(d3.csv, "pres16results.csv")
+        .await(callback);
+});
+

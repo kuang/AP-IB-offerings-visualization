@@ -1,5 +1,9 @@
 body {
     font-family: 'Barlow Condensed', Calibri, sans-serif;
+  background-color: black; 
+}
+
+html {
 }
 
 .background {
