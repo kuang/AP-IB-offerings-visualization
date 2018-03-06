@@ -278,7 +278,52 @@ function callback(
         } )
         .attr("r", 5)
         .style("fill", function(d) { return color(d.Percent); });
+
+    var XaxisData = apPercents.map(function(d) { return d.Percent; });
+    var YaxisData = apPercents.map(function(d) {             
+        var abbrev = getStateCode(d.State, tsv);
+        st = trump[abbrev];
+        return (st[0] / st[1]);
+    });
+    var regression = leastSquaresequation(XaxisData,YaxisData);
+
+    var line = d3.line()
+        .x(function(d) { return x(d.Percent); })
+        .y(function(d) { return y(regression(d.Percent)); });
+
+    presSVG.append("path")
+        .datum(apPercents)
+        .attr("d", line)
+
 }
+
+
+
+function leastSquaresequation(XaxisData, Yaxisdata) {
+    var ReduceAddition = function(prev, cur) { return prev + cur; };
+    
+    // finding the mean of Xaxis and Yaxis data
+    var xBar = XaxisData.reduce(ReduceAddition) * 1.0 / XaxisData.length;
+    var yBar = Yaxisdata.reduce(ReduceAddition) * 1.0 / Yaxisdata.length;
+
+    var SquareXX = XaxisData.map(function(d) { return Math.pow(d - xBar, 2); })
+      .reduce(ReduceAddition);
+    
+    var ssYY = Yaxisdata.map(function(d) { return Math.pow(d - yBar, 2); })
+      .reduce(ReduceAddition);
+      
+    var MeanDiffXY = XaxisData.map(function(d, i) { return (d - xBar) * (Yaxisdata[i] - yBar); })
+      .reduce(ReduceAddition);
+      
+    var slope = MeanDiffXY / SquareXX;
+    var intercept = yBar - (xBar * slope);
+    
+// returning regression function
+    return function(x){
+      return x*slope+intercept
+    }
+
+  }
 
 $(document).ready(function() {
     var svg = d3.select("svg");
